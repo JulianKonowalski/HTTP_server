@@ -1,0 +1,8 @@
+# build directories
+out/
+build/
+
+# config directories
+.vs/
+.vscode/
+.cache/
