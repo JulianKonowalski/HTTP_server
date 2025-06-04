@@ -10,13 +10,20 @@ SET(ASIO_INCLUDE_DIR
     ${CMAKE_CURRENT_SOURCE_DIR}/3rd_party/asio/asio/include
 )
 
-add_executable(server src/main.cpp)
+add_executable(server 
+    src/main.cpp
+)
+
 target_include_directories(
     server
     PUBLIC
     ${ASIO_INCLUDE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 if (WIN32)
     target_compile_definitions(server PRIVATE _WIN32_WINNT=0x0601)
 endif()
+target_compile_definitions(server PRIVATE ASIO_STANDALONE)
+
+include_directories(include)
