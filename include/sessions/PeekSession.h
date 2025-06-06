@@ -7,6 +7,13 @@
 
 namespace server::sessions {
 
+/*
+ * @brief TCP/IP session that
+ *  synchronously reads data 
+ *  sent from the client and 
+ *  outputs it to the console 
+ *  window.
+ */
 class PeekSession : public server::core::TCPSession {
 public:
 
@@ -37,12 +44,23 @@ public:
         return std::static_pointer_cast<PeekSession const>(shared_from_this());
     }
 
+    /*
+     * @brief Starts handling a 
+     *  TCP client.
+     */
     void run(void) override {
         this->do_read();
     }
 
 private:
 
+    /*
+     * @brief Asynchronously reads 
+     *  available data from the session 
+     *  socket. After reading invokes 
+     *  a handle_read method that handles 
+     *  received data.
+     */
     void do_read(void) {
         auto self = this->shared_child_from_this();
         mSocket.async_read_some(
@@ -57,6 +75,20 @@ private:
         );
     }
 
+    /*
+     * @brief Handles data read from 
+     *  the session socket. After 
+     *  handling the data buffer invokes 
+     *  do_read method to continue reading 
+     *  bytes from the socket.
+     *
+     * @param self Shared pointer to *this*
+     *  to avoid premature session termination
+     * @param errorCode Socket error code, 0
+     *  if no error has occured
+     * @param length Length of the received 
+     *  data buffer.
+     */
     void handle_read(
         std::shared_ptr<PeekSession> self, 
         const asio::error_code& errorCode, 
@@ -69,9 +101,12 @@ private:
         }
         self->do_read();   
     }
-        
+    
+    /*
+     * Internal data buffer for 
+     * bytes read from the socket.
+     */
     std::array<char, 1024> mBuffer;
-
 
 };
 
