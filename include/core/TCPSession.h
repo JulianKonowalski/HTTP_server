@@ -18,7 +18,6 @@ class TCPSession : public std::enable_shared_from_this<TCPSession> {
 
 public: 
 
-
     /* 
      * @brief Creates a new TCPSession
      *  object.
@@ -42,7 +41,9 @@ public:
 
     /*
      * @brief Starts handling the 
-     *  client's requests
+     *  client's requests. Override 
+     *  this method to implement custom
+     *  client handling logic.
      */
     virtual void run(void) {
         std::cout << "Starting a new TCP session\n";
