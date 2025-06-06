@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31.1)
+cmake_minimum_required(VERSION 3.0.0)
 project(server)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -12,7 +12,7 @@ SET(ASIO_INCLUDE_DIR
 
 add_executable(server 
     src/main.cpp
-)
+ "include/sessions/HTTPSession.h")
 
 target_include_directories(
     server

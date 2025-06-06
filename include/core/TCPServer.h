@@ -10,35 +10,48 @@
 
 #include "core/TCPSession.h"
 
+#ifndef DERIVED_CONCEPT
+    #define DERIVED_CONCEPT
+    template<class T, class U>
+    concept Derived = std::is_base_of<U, T>::value;
+#endif
+
 namespace server::core {
 
 /*
- * @brief general purpose 
+ * @brief General purpose 
  *  TCP/IP server that listens 
  *  to connection requests on 
  *  a given port and asynchronously 
- *  serves clients 
+ *  serves clients.
+ *
+ * @tparam tSession TCP session object
+ *  containing the client handling 
+ *  logic.
+ *
+ * @see tSession
  */
-template<typename tHandler>
+template<Derived<TCPSession> tSession>
 class TCPServer {
 public:
 
     /*
-     * @brief constructs a new 
-     *  server object
+     * @brief Constructs a new 
+     *  server object.
      *
-     * @param port uint16_t port 
-     *  that the server's acceptor 
-     *  will listen on
+     * @param port Port that the 
+     *  server's acceptor socket 
+     *  will listen on for connection 
+     *  requests.
      */
-    TCPServer(uint16_t port);
+    TCPServer(const uint16_t& port);
 
     /*
-     * @brief starts listening 
+     * @brief Starts listening 
      *  for client requests. After 
      *  receiving a request accepts 
      *  it and delegates it to a 
-     *  dedicated session object
+     *  dedicated session object.
      */
     void run(void);
 
@@ -48,42 +61,57 @@ private:
     using tcp = asio::ip::tcp;
 
     /*
-     * @brief awaits and accepts 
-     *  new connections asynchronously 
+     * @brief Awaits and accepts 
+     *  new connections asynchronously.
+     *  After accepting a connection 
+     *  delegates it for validation to 
+     *  the internal handle_accept method.
+     *
+     * @see TCPServer::handle_accept()
      */
     void accept_connections(void);
     
     /*
-     * @brief checks if there are 
+     * @brief Checks if there are 
      *  no socket errors after receiving 
      *  a request and delegates the 
      *  request to a dedicated session 
-     *  object
+     *  object.
+     *
+     * @see tSession
      */
-    void handle_accept(std::shared_ptr<TCPSession<tHandler>> session, const std::error_code& errorCode);
+    void handle_accept(std::shared_ptr<tSession> session, const std::error_code& errorCode);
 
+    /*
+     * @brief Handles connection 
+     *  errors.
+     *
+     * @param errorCode Error code.
+     */
+    void handle_error(const std::error_code& errorCode);
+
+    /* Server's I/O context */
     asio::io_context mContext;
+
+    /* Internal acceptor socket */
     tcp::acceptor mAcceptor;
 
 };
 
-template<typename tHandler>
-TCPServer<tHandler>::TCPServer(uint16_t port) :
+template<Derived<TCPSession> tSession>
+TCPServer<tSession>::TCPServer(const uint16_t& port) :
     mAcceptor(mContext, tcp::endpoint(tcp::v4(), port))
-{
-    std::cout << "Created a server\n";
-}
+{}
 
-template<typename tHandler>
-void TCPServer<tHandler>::run(void) {
-    std::cout << "Starting server\n";
+template<Derived<TCPSession> tSession>
+void TCPServer<tSession>::run(void) {
     this->accept_connections();
     mContext.run();
 }
 
-template<typename tHandler>
-void TCPServer<tHandler>::accept_connections(void){
-    auto newSession = std::shared_ptr<TCPSession<tHandler>>(new TCPSession<tHandler>(mContext));
+template<Derived<TCPSession> tSession>
+void TCPServer<tSession>::accept_connections(void) {
+    auto newSession = std::shared_ptr<tSession>(new tSession(mContext));
     mAcceptor.async_accept(
         newSession->get_socket(),
         std::bind(
@@ -95,14 +123,25 @@ void TCPServer<tHandler>::accept_connections(void){
     );
 }
 
-template<typename tHandler>
-void TCPServer<tHandler>::handle_accept(
-        std::shared_ptr<TCPSession<tHandler>> session, 
-        const std::error_code& errorCode
+template<Derived<TCPSession> tSession>
+void TCPServer<tSession>::handle_accept (
+    std::shared_ptr<tSession> session, 
+    const std::error_code& errorCode
 ) {
-    if (!errorCode) { session->run(); }
-    else { std::cout << "Encountered an error: " << errorCode.message() << "\n"; }
+    if (errorCode) { this->handle_error(errorCode); } 
+    else { session->run(); }
     this->accept_connections(); //this is not recursive, it's asynchronous
+}
+
+template<Derived<TCPSession> tSession>
+void TCPServer<tSession>::handle_error (
+    const std::error_code& errorCode
+) {
+    std::cout << "Server encountered an error: " 
+        << errorCode.message() 
+        << std::endl;    
+
+    //log to file or whatever
 }
 
 }

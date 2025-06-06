@@ -1,59 +1,59 @@
 #pragma once
 
 #include <memory>
+#include <iostream>
+
 #include <asio/ip/tcp.hpp>
 #include <asio/io_context.hpp>
 
 namespace server::core {
 
 /*
- * @brief general purpose TCPSession class
- *  that handles TCP clients.
- *
- * @tparam handler tcpSessionHandler client 
- *  handling logic. The object will follow 
- *  given instructions to allow for easy
- *  customisation of client handling logic.
+ * @brief General purpose TCPSession 
+ *  class that handles TCP clients.
  */
-template <typename tHandler>
-class TCPSession : public std::enable_shared_from_this<TCPSession<tHandler>> {
+class TCPSession : public std::enable_shared_from_this<TCPSession> {
 
     using tcp = asio::ip::tcp;
 
 public: 
 
+
     /* 
-     * @brief creates a new TCPSession
-     *  object from a given I/O context
+     * @brief Creates a new TCPSession
+     *  object.
      *
-     * @param context asio::io_context 
-     *  I/O context for the new TCPSession 
-     *  object
+     * @param context I/O context for the 
+     *  new session's TCP/IP socket.
      */
-    TCPSession(asio::io_context& context) :
-        mSocket(context) 
+    TCPSession(
+        asio::io_context& context
+    ) : mSocket(context)
     {}
 
     /*
-     * @brief returns a reference to 
-     *  the session socket 
+     * @brief Returns a reference to 
+     *  the session's socket.
      *
-     * @return asio::ip::tcp::socket 
-     *  reference to the session socket
+     * @return A reference to the 
+     *  session's TCP/IP socket.
      */
-    tcp::socket& get_socket(void) { return mSocket; }
+    [[nodiscard]] tcp::socket& get_socket(void) { return mSocket; }
 
     /*
-     * @brief starts handling the client.
-     *  The instructions don't loop unless 
-     *  the handler contains a main loop.
+     * @brief Starts handling the 
+     *  client's requests
      */
-    void run(void) {
-        mHandler();
+    virtual void run(void) {
+        std::cout << "Starting a new TCP session\n";
     }
 
-private:
-    tHandler mHandler;
+protected:
+
+    /*
+     * Internal socket connected 
+     * to the served client.
+     */
     tcp::socket mSocket;
 
 };   
