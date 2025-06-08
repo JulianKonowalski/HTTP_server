@@ -1,9 +1,13 @@
-#include "HTTP/HTTPSession.h"
+#include "HTTP/Session.h"
+
+#include "HTTP/Parser.h"
+#include "HTTP/Request.h"
+#include "HTTP/Response.h"
 
 using namespace server::http;
 
 
-void HTTPSession::run(void) {
+void Session::run(void) {
     do_read();
     //read header //async
     //check for socket error
@@ -15,13 +19,13 @@ void HTTPSession::run(void) {
     //send response //async
 }
 
-void HTTPSession::do_read(void){
+void Session::do_read(void){
     asio::async_read_until(
     mSocket,     
     mBuffer, 
     "\r\n\r\n", 
     std::bind(
-        &HTTPSession::after_read,
+        &Session::after_read,
         shared_from_this(),
         asio::placeholders::error,
         asio::placeholders::bytes_transferred
@@ -29,12 +33,12 @@ void HTTPSession::do_read(void){
     );
 }
 
-void HTTPSession::do_send(asio::streambuf& response){
+void Session::do_send(asio::streambuf& response){
     asio::async_write(
     mSocket,
     response,
     std::bind(
-        &HTTPSession::after_send,
+        &Session::after_send,
         shared_from_this(),
         asio::placeholders::error,
         asio::placeholders::bytes_transferred
@@ -44,15 +48,15 @@ void HTTPSession::do_send(asio::streambuf& response){
 
 
 
-void HTTPSession::after_read(const asio::error_code& errorCode, const size_t& length){
+void Session::after_read(const asio::error_code& errorCode, const size_t& length){
     try
     {
     if (errorCode) {
         //error response
         // throw;
     }
-        HTTPRequest request = server::http::parser::unpack_request(mBuffer);
-        asio::streambuf response = parser::pack_response(HTTPResponse());
+        Request request = server::http::parser::unpack_request(mBuffer);
+        asio::streambuf response = parser::pack_response(Response("HTTP/1.0", 200, "OK", {}, ""));
         do_send(response);
     }
     catch(const std::exception& e)
@@ -61,7 +65,7 @@ void HTTPSession::after_read(const asio::error_code& errorCode, const size_t& le
     }
 }
 
-void server::http::HTTPSession::after_send(const asio::error_code &errorCode, const size_t &length){
+void server::http::Session::after_send(const asio::error_code &errorCode, const size_t &length){
     if (errorCode) {
         //handle error
     }

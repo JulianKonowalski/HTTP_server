@@ -2,8 +2,8 @@
 
 #include <asio/streambuf.hpp>
 
-#include "HTTP/HTTPRequest.h"
-#include "HTTP/HTTPResponse.h"
+#include "HTTP/Request.h"
+#include "HTTP/Response.h"
 
 namespace server::http::parser {
 
@@ -18,7 +18,7 @@ namespace server::http::parser {
  * @return Parsed request in the form 
  *  of an HTTPRequest object.
  */
-HTTPRequest unpack_request(const asio::streambuf& request);
+server::http::Request unpack_request(const asio::streambuf& request);
 
 /*
  * @brief Parses an HTTPResponse object 
@@ -30,6 +30,6 @@ HTTPRequest unpack_request(const asio::streambuf& request);
  * @return Parsed response in the form
  *  of an std::string object.
  */
-asio::streambuf pack_response(const HTTPResponse& response);
+asio::streambuf pack_response(const server::http::Response& response);
 
 }

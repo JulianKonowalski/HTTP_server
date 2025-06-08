@@ -12,11 +12,9 @@ SET(ASIO_INCLUDE_DIR
 
 add_executable(server 
     src/main.cpp 
-    src/HTTP/HTTPSession.cpp
-    src/HTTP/HTTPParser.cpp
-    src/HTTP/HTTPRequest.cpp
-    src/HTTP/HTTPResponse.cpp
-    )
+    src/HTTP/Session.cpp
+    src/HTTP/Parser.cpp
+)
 
 target_include_directories(
     server
