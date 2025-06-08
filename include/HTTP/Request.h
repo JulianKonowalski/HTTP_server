@@ -7,12 +7,12 @@
 
 
 namespace server::http {
-  class Request; // Forward declaration
+  class Request;
 }
 
 namespace server::http::parser {
-  // Forward declare the function before it's used as a friend
-  server::http::Request unpack_request(asio::streambuf& request_bufer);
+    //required for friend function
+    server::http::Request unpack_request(asio::streambuf& request_bufer); 
 }
 
 namespace server::http{    
