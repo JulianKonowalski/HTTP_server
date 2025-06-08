@@ -2,14 +2,10 @@
 
 using namespace server::http;
 
-HTTPRequest parser::string_to_request(
-    const asio::basic_streambuf<>& request
-) {
+HTTPRequest parser::unpack_request(const asio::streambuf &request){
     return HTTPRequest();
 }
 
-std::string response_to_string(
-    const HTTPResponse& response
-) {
-    return std::string();
+asio::streambuf parser::pack_response(const HTTPResponse &response){
+    return asio::streambuf();
 }

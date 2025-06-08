@@ -2,11 +2,18 @@
 
 #include <memory>
 
-#include <asio/basic_streambuf.hpp>
+#include <asio/streambuf.hpp>
+#include <asio/placeholders.hpp>
+#include <asio/read_until.hpp>
+#include <asio/write.hpp>
 
 #include "core/TCPSession.h"
+#include "HTTP/HTTPParser.h"
+#include "HTTP/HTTPRequest.h"
+#include "HTTP/HTTPResponse.h"
 
-namespace server::sessions {
+
+namespace server::http {
  
 /*
  * @brief TCP session for serving
@@ -36,19 +43,27 @@ public:
     void do_read(void);
 
     /*
+     * @brief wites to buffer and calls after 
+     *
+     * @see HTTPSession::mBuffer
+     */
+    void do_send(asio::streambuf& response);
+
+    /*
      * @brief Validates and handles 
      *  the received HTTP request.
      *
      * @see HTTPSession::do_read()
      * @see HTTPSession::mBuffer
      */
-    void handle_request(void);
+    void after_read(const asio::error_code& errorCode, const size_t& length);
 
     /*
      * @brief Sends a response 
      *  to the HTTP client.
      */
-    void do_send(void);
+    void after_send(const asio::error_code& errorCode, const size_t& length);
+
 
 private:
 
@@ -56,8 +71,7 @@ private:
      * Internal buffer containing 
      * the received HTTP request.
      */
-    asio::basic_streambuf<> mBuffer;
-
+    asio::streambuf mBuffer;
 };
 
 }
