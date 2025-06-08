@@ -13,7 +13,6 @@ namespace server::http {
  */
 class Response {
 public:
-
     using Headers = std::unordered_map<std::string, std::string>;
 
     /*
