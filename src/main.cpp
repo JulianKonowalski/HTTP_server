@@ -1,5 +1,7 @@
 #include "core/TCPServer.h"
 #include "sessions/PeekSession.h"
+#include "HTTP/HTTPSession.h"
+
 
 static constexpr uint16_t kHTTPPort = 80;
 
