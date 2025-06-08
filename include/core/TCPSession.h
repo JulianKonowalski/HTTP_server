@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <iostream>
 
 #include <asio/ip/tcp.hpp>
@@ -12,7 +11,7 @@ namespace server::core {
  * @brief General purpose TCPSession 
  *  class that handles TCP clients.
  */
-class TCPSession : public std::enable_shared_from_this<TCPSession> {
+class TCPSession {
 
     using tcp = asio::ip::tcp;
 
