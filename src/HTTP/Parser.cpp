@@ -4,7 +4,6 @@
 
 
 using namespace server::http;
-extern std::unordered_map<std::string, Method> str_to_method;
 
 Request parser::unpack_request(asio::streambuf &request_bufer){
     Request request;
@@ -23,14 +22,12 @@ Request parser::unpack_request(asio::streambuf &request_bufer){
     std::cout<<"parser\n";
     while (std::getline(is, line)) {
         if (line.empty() || line == "\r") {
-            // End of headers (empty line)
             break;
         }
         std::istringstream line_stream(line);
         std::string key, value;
         if (std::getline(line_stream, key, ':')) {
             if (std::getline(line_stream, value)) {
-                // Trim leading spaces from value
                 size_t start = value.find_first_not_of(" \t");
                 if (start != std::string::npos) {
                     value = value.substr(start);
