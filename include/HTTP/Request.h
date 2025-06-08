@@ -2,10 +2,21 @@
 
 #include <string>
 #include <filesystem>
-#include <unordered_map>
+
+#include "http/method.hpp"
+
 
 namespace server::http {
- 
+  class Request; // Forward declaration
+}
+
+namespace server::http::parser {
+  // Forward declare the function before it's used as a friend
+  server::http::Request unpack_request(asio::streambuf& request_bufer);
+}
+
+namespace server::http{    
+
 /*
  * @brief Data container for 
  *  storing information about 
@@ -13,25 +24,7 @@ namespace server::http {
  */
 class Request {
 public:
-
     using Headers = std::unordered_map<std::string, std::string>;
-
-    /*
-     * @brief Available HTTP 
-     *  request methods.
-     */
-    enum class Method {
-        HTTP_GET,
-        HTTP_HEAD,
-        HTTP_OPTIONS,
-        HTTP_TRACE,
-        HTTP_PUT,
-        HTTP_DELETE, //DELETE is a windows macro, so don't change this
-        HTTP_POST,
-        HTTP_PATCH,
-        HTTP_CONNECT
-    };
-
     /*
      * @brief Creates a new HTTP request
      *  object containing request data.
@@ -62,7 +55,7 @@ public:
      * @return Const reference to 
      *  the method of the HTTP request.
      */
-    const Method& get_method(void) { return mMethod; }
+    const Method& get_method(void) const { return mMethod; }
 
     /*
      * @brief Returns the URI 
@@ -73,7 +66,7 @@ public:
      *  containing the URI of the 
      *  HTTP request.
      */
-    const std::filesystem::path& get_URI(void) { return mURI; }
+    const std::filesystem::path& get_URI(void) const { return mURI; }
 
     /*
      * @brief Returns the HTTP 
@@ -85,7 +78,7 @@ public:
      *  the HTTP version of the 
      *  request object.
      */
-    const std::string& get_http_version(void) { return mHttpVersion; }
+    const std::string& get_http_version(void) const { return mHttpVersion; }
 
     /*
      * @brief Returns the headers 
@@ -95,7 +88,7 @@ public:
      *  an unordered map containing 
      *  headers of the request object.
      */
-    const Headers& get_headers(void) { return mHeaders; }
+    const Headers& get_headers(void) const { return mHeaders; }
 
     /*
      * @brief Returns the body 
@@ -105,30 +98,32 @@ public:
      *  a string containing the body 
      *  of the request object.
      */
-    const std::string& get_body(void) { return mBody; }
+    const std::string& get_body(void) const { return mBody; }
 
 private:
+    friend server::http::Request parser::unpack_request(asio::streambuf&);
+    Request() = default;
 
     /* HTTP method of the request */
-    const Method mMethod;
+    /*const*/ Method mMethod;
 
     /* URI of the request. */
-    const std::filesystem::path mURI;
+    /*const*/ std::filesystem::path mURI;
 
     /* Request HTTP version */
-    const std::string mHttpVersion;
+    /*const*/ std::string mHttpVersion;
 
     /* 
      * Unordered map containing
      * headers of the request.
      */
-    const Headers mHeaders;
+    /*const*/ Headers mHeaders;
 
     /*
      * A string containing 
      * the body of the request.
      */
-    const std::string mBody;
+    /*const*/ std::string mBody;
 
 };   
 

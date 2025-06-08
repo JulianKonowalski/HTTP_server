@@ -12,8 +12,8 @@ SET(ASIO_INCLUDE_DIR
 
 add_executable(server 
     src/main.cpp 
-    src/HTTP/Session.cpp
-    src/HTTP/Parser.cpp
+    src/http/Session.cpp
+    src/http/Parser.cpp
 )
 
 target_include_directories(
