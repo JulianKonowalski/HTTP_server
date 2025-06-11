@@ -1,8 +1,23 @@
 #include "http/Parser.h"
 
 #include <iostream>
+#include <memory>
 
 using namespace server::http;
+
+inline const std::unordered_map
+<std::string, Method> str_to_method{
+    {"GET",Method::HTTP_GET},
+    {"HEAD",Method::HTTP_HEAD},
+    {"OPTIONS",Method::HTTP_OPTIONS},
+    {"TRACE",Method::HTTP_TRACE},
+    {"PUT",Method::HTTP_PUT},
+    {"DELETE",Method::HTTP_DELETE},
+    {"POST",Method::HTTP_POST},
+    {"PATCH",Method::HTTP_PATCH},
+    {"CONNECT",Method::HTTP_CONNECT},
+};
+
 
 parser::ParserException::ParserException(void) throw() 
     : std::runtime_error("Encountered an unknown error while parsing an HTTP message.")
@@ -25,7 +40,6 @@ Request parser::unpack_request(asio::streambuf &request_bufer){
     } else {
         throw parser::ParserException("Empty HTTP request.");
     }
-    std::cout<<"parser\n";
     while (std::getline(is, line)) {
         if (line.empty() || line == "\r") {
             break;
@@ -52,7 +66,16 @@ Request parser::unpack_request(asio::streambuf &request_bufer){
     return request;
 }
 
-asio::streambuf parser::pack_response(const Response &response)
+void parser::pack_response(asio::streambuf& ouputBufer ,const Response &response)
 {
-    return asio::streambuf();
+  ouputBufer.consume(ouputBufer.size());
+    std::ostream os(&ouputBufer);
+    os  << response.get_http_version() << ' ' 
+        << response.get_response_code() << ' ' 
+        << response.get_reason_phrase() << '\n';
+    for (auto &h : response.get_headers())
+    {
+        os << h.first << ": " << h.second << '\n';
+    }
+    os << '\n' << response.get_body() << kMsgEnd;
 }

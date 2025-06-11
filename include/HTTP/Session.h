@@ -9,9 +9,8 @@
 
 #include "core/TCPSession.h"
 
-
 namespace server::http {
- 
+
 /*
  * @brief TCP session for serving
  *  HTTP requests

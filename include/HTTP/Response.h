@@ -40,7 +40,7 @@ public:
      *  string containing the response 
      *  HTTP version.
      */
-    const std::string& get_http_version(void) { return mHttpVersion; }
+    const std::string& get_http_version(void) const { return mHttpVersion; }
 
     /*
      * @brief Returns the response 
@@ -49,7 +49,7 @@ public:
      * @return Const reference to 
      *  the response code.
      */
-    const uint16_t& get_response_code(void) { return mResponseCode; }
+    const uint16_t& get_response_code(void) const { return mResponseCode; }
 
     /*
      * @brief Returns the response 
@@ -59,7 +59,7 @@ public:
      *  string containing the response 
      *  reason phrase.
      */
-    const std::string& get_reason_phrase(void) { return mReasonPhrase; }
+    const std::string& get_reason_phrase(void) const { return mReasonPhrase; }
 
     /*
      * @brief Returns the response 
@@ -69,7 +69,7 @@ public:
      *  an unordered map of the 
      *  response headers.
      */
-    const Headers& get_headers(void) { return mHeaders; }
+    const Headers& get_headers(void) const { return mHeaders; }
 
     /*
      * @brief Returns the response 
@@ -79,7 +79,7 @@ public:
      *  string containing the response 
      *  body.
      */
-    const std::string& get_body(void) { return mBody; }
+    const std::string& get_body(void) const { return mBody; }
 
 private:
 
