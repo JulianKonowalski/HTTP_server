@@ -1,14 +1,39 @@
 #pragma once
 
-#include <asio/streambuf.hpp>
-#include <unordered_map>
-#include <filesystem>
+#include <stdexcept>
 
-#include "http/method.hpp"
+#include <asio/streambuf.hpp>
+
 #include "http/Request.h"
 #include "http/Response.h"
 
 namespace server::http::parser {
+
+/*
+ * @brief Exception object exclusive 
+ *  to the HTTP parser functionality.
+ */
+class ParserException : public std::runtime_error {
+public:
+
+    /*
+     * @brief Creates a ParserException 
+     *  object with the default error 
+     *  message.
+     */
+    ParserException(void) throw();
+
+    /*
+     * @brief Creates a ParserException
+     *  object with the supplied error 
+     *  message.
+     *
+     * @param message Error message to 
+     *  be displayed.
+     */
+    ParserException(char const* const message) throw();
+
+};
 
 /*
  * @brief Parses a string containing

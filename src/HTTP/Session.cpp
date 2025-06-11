@@ -70,7 +70,7 @@ void Session::after_read(const asio::error_code& errorCode, const size_t& length
         Request request = server::http::parser::unpack_request(mBuffer);
         print_request(request);
         asio::streambuf response = parser::pack_response(Response("HTTP/1.0", 200, "OK", {}, ""));
-        do_send(response);
+        //do_send(response);
     }
     catch(const std::exception& e)
     {
