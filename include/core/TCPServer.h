@@ -34,7 +34,7 @@ namespace server::core {
 template<Derived<TCPSession> tSession>
 class TCPServer {
 public:
-
+    ~TCPServer() { std::cout << "destroy server\n";}
     /*
      * @brief Constructs a new 
      *  server object.
@@ -121,6 +121,7 @@ void TCPServer<tSession>::accept_connections(void) {
             asio::placeholders::error
         )
     );
+    std::cout << "accept\n";
 }
 
 template<Derived<TCPSession> tSession>
@@ -130,7 +131,7 @@ void TCPServer<tSession>::handle_accept (
 ) {
     if (errorCode) { this->handle_error(errorCode); } 
     else { session->run(); }
-    this->accept_connections(); //this is not recursive, it's asynchronous
+    this->accept_connections();
 }
 
 template<Derived<TCPSession> tSession>
@@ -141,7 +142,7 @@ void TCPServer<tSession>::handle_error (
         << errorCode.message() 
         << std::endl;    
 
-    //log to file or whatever
+    //log to file or   whatever
 }
 
 }

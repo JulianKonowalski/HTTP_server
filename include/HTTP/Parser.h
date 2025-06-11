@@ -1,11 +1,12 @@
 #pragma once
-
 #include <stdexcept>
 
 #include <asio/streambuf.hpp>
 
 #include "http/Request.h"
 #include "http/Response.h"
+
+static constexpr char kMsgEnd[] = "\r\n\r\n";
 
 namespace server::http::parser {
 
@@ -46,7 +47,7 @@ public:
  * @return Parsed request in the form 
  *  of an HTTPRequest object.
  */
-server::http::Request unpack_request(asio::streambuf& request_bufer);
+Request unpack_request(asio::streambuf& requestBufer);
 
 /*
  * @brief Parses an HTTPResponse object 
@@ -58,6 +59,7 @@ server::http::Request unpack_request(asio::streambuf& request_bufer);
  * @retu unrn Parsed response in the form
  *  of an std::string object.
  */
-asio::streambuf pack_response(const server::http::Response& response);
+void pack_response(asio::streambuf& outputBufer, const Response& response);
+
 
 }
