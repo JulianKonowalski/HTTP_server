@@ -2,8 +2,15 @@
 
 #include <iostream>
 
-
 using namespace server::http;
+
+parser::ParserException::ParserException(void) throw() 
+    : std::runtime_error("Encountered an unknown error while parsing an HTTP message.")
+{}
+
+parser::ParserException::ParserException(char const* const message) throw() 
+    : std::runtime_error(message) 
+{}
 
 Request parser::unpack_request(asio::streambuf &request_bufer){
     Request request;
@@ -15,9 +22,8 @@ Request parser::unpack_request(asio::streambuf &request_bufer){
         iss >> method_str >> uri_str >> request.mHttpVersion;
         request.mMethod = str_to_method.at(method_str);
         request.mURI = uri_str;
-    }
-    else{
-        //throw
+    } else {
+        throw parser::ParserException("Empty HTTP request.");
     }
     std::cout<<"parser\n";
     while (std::getline(is, line)) {
